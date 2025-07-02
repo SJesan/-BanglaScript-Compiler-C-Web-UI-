@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BanglaScript Compiler | University Project</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .collapsible { cursor: pointer; }
+    .content { display: none; padding: 0.5rem 0; }
+    .active + .content { display: block; }
+    .dark-mode { background: #18181b !important; color: #e5e7eb !important; }
+    .dark-mode .bg-white { background: #27272a !important; }
+    .dark-mode .text-indigo-700 { color: #a5b4fc !important; }
+    .dark-mode .bg-gray-900 { background: #18181b !important; }
+    .dark-mode .text-green-200 { color: #bbf7d0 !important; }
+    .dark-mode .bg-gray-200 { background: #27272a !important; color: #e5e7eb !important; }
+    .dark-mode .text-gray-800 { color: #e5e7eb !important; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 via-purple-100 to-blue-100 min-h-screen flex flex-col items-center py-8" id="body">
+  <div class="w-full max-w-4xl mx-auto p-6">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-2">BanglaScript Compiler</h1>
+      <p class="text-lg text-indigo-700 font-semibold mb-1">A Modern Compiler for a Modern Language</p>
+      <p class="text-sm text-gray-500 italic">University Project - Computer Science & Engineering</p>
+      <button id="toggleDark" class="mt-4 px-4 py-1 rounded bg-gray-800 text-white text-sm">🌙 Toggle Dark Mode</button>
+    </header>
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+      <label for="code" class="block text-lg font-semibold mb-2">BanglaScript Code:</label>
+      <textarea id="code" rows="8" class="w-full p-4 rounded-lg border-2 border-indigo-200 focus:border-indigo-500 font-mono text-base bg-gray-900 text-indigo-100 resize-y mb-4" placeholder="dhori x = 10;\ndhori y = 5;\ndhori jogfol = x + y;\ndekhao(jogfol);\n#"></textarea>
+      <div class="flex flex-wrap gap-4 mb-2">
+        <button id="compileBtn" class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white px-6 py-2 rounded-lg font-bold shadow hover:from-indigo-700 hover:to-blue-600 transition">🚀 Compile & Analyze</button>
+        <button id="clearBtn" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-bold hover:bg-gray-300 transition">🗑️ Clear</button>
+        <button id="demoBtn" class="bg-gradient-to-r from-green-400 to-green-600 text-white px-6 py-2 rounded-lg font-bold shadow hover:from-green-500 hover:to-green-700 transition">🎮 Run Demo</button>
+        <button id="resetBtn" class="bg-red-200 text-red-700 px-6 py-2 rounded-lg font-bold hover:bg-red-300 transition">🔄 Reset</button>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-4">
+        <button class="demo-example bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-1 rounded text-sm font-mono" data-demo="1">Demo 1: Variables</button>
+        <button class="demo-example bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-1 rounded text-sm font-mono" data-demo="2">Demo 2: Arithmetic</button>
+        <button class="demo-example bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-1 rounded text-sm font-mono" data-demo="3">Demo 3: Assignment</button>
+        <button class="demo-example bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-1 rounded text-sm font-mono" data-demo="4">Demo 4: Print</button>
+        <button class="demo-example bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-1 rounded text-sm font-mono" data-demo="5">Demo 5: If (jodi)</button>
+        <button class="demo-example bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-1 rounded text-sm font-mono" data-demo="6">Demo 6: Loop (jotokkhon)</button>
+        <button class="demo-example bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-1 rounded text-sm font-mono" data-demo="7">Demo 7: String</button>
+        <button class="demo-example bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-1 rounded text-sm font-mono" data-demo="8">Demo 8: Error</button>
+      </div>
+      <pre id="demoCodeBox" class="bg-gray-200 text-gray-800 p-4 rounded-lg mt-2 mb-2 font-mono text-sm whitespace-pre-wrap"></pre>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-6 mt-4">
+      <h2 class="text-xl font-bold text-indigo-700 mb-4">Compilation Output</h2>
+      <div class="flex gap-2 mb-2">
+        <button id="copyBtn" class="bg-blue-200 text-blue-800 px-4 py-1 rounded text-sm">📋 Copy Output</button>
+        <button id="downloadBtn" class="bg-green-200 text-green-800 px-4 py-1 rounded text-sm">⬇️ Download Output</button>
+      </div>
+      <div id="outputPhases"></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    // Demo code examples
+    const demoCodes = [
+      `dhori a = 5;\ndhori b = 10;\ndekhao(a);\ndekhao(b);`,
+      `dhori x = 7;\ndhori y = 3;\ndhori sum = x + y;\ndhori mul = x * y;\ndekhao(sum);\ndekhao(mul);`,
+      `dhori n = 1;\nn = n + 9;\ndekhao(n);`,
+      `dhori msg = 100;\ndekhao(msg);`,
+      `dhori age = 18;\njodi (age >= 18) {\n  dekhao(\"Adult\");\n}`,
+      `dhori i = 1;\njotokkhon (i <= 3) {\n  dekhao(i);\n  i = i + 1;\n}`,
+      `dhori name = \"BanglaScript\";\ndekhao(name);`,
+      `x = 5;\ndekhao(x); // Error: x not declared`
+    ];
+    document.querySelectorAll('.demo-example').forEach(btn => {
+      btn.onclick = function() {
+        const idx = parseInt(this.getAttribute('data-demo'), 10) - 1;
+        const code = demoCodes[idx];
+        document.getElementById('code').value = code;
+        document.getElementById('demoCodeBox').textContent = code;
+      };
+    });
+    document.getElementById('demoBtn').onclick = function() {
+      document.getElementById('code').value = demoCodes[0];
+      document.getElementById('demoCodeBox').textContent = demoCodes[0];
+    };
+    document.getElementById('clearBtn').onclick = function() {
+      document.getElementById('code').value = '';
+      document.getElementById('outputPhases').innerHTML = '';
+      document.getElementById('demoCodeBox').textContent = '';
+    };
+    document.getElementById('resetBtn').onclick = function() {
+      document.getElementById('code').value = '';
+      document.getElementById('outputPhases').innerHTML = '';
+      document.getElementById('demoCodeBox').textContent = '';
+    };
+    document.getElementById('toggleDark').onclick = function() {
+      document.getElementById('body').classList.toggle('dark-mode');
+    };
+    // Output handling
+    document.getElementById('copyBtn').onclick = function() {
+      const text = document.getElementById('outputPhases').innerText;
+      navigator.clipboard.writeText(text);
+    };
+    document.getElementById('downloadBtn').onclick = function() {
+      const text = document.getElementById('outputPhases').innerText;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'banglascript_output.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+    // Compile button: fetch and show phase-by-phase output
+    document.getElementById('compileBtn').onclick = async function() {
+      const code = document.getElementById('code').value;
+      const outputDiv = document.getElementById('outputPhases');
+      outputDiv.innerHTML = '<span class="text-gray-500">Compiling...</span>';
+      try {
+        const res = await fetch('/compile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
+        });
+        const text = await res.text();
+        // Split output into phases by emoji headers
+        const phaseRegex = /(🔍|🌳|📦|🛡️|📝) [^\n]+\n[-]+\n|\n(?=🔍|🌳|📦|🛡️|📝)/g;
+        const parts = text.split(phaseRegex).filter(Boolean);
+        const headers = text.match(phaseRegex) || [];
+        let html = '';
+        for (let i = 0; i < parts.length; i++) {
+          html += `<div class="mb-4">
+            <button class="collapsible font-bold text-indigo-700 flex items-center gap-2">${headers[i] ? headers[i].replace(/\n/g, '') : ''} <span class="text-xs text-gray-400 ml-2">(click to expand/collapse)</span></button>
+            <div class="content bg-gray-100 dark:bg-gray-900 rounded p-3 mt-1"><pre class="whitespace-pre-wrap text-gray-800 dark:text-green-200">${parts[i].trim()}</pre></div>
+          </div>`;
+        }
+        outputDiv.innerHTML = html;
+        document.querySelectorAll('.collapsible').forEach(btn => {
+          btn.onclick = function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+          };
+        });
+        // Expand the first phase by default
+        const firstContent = document.querySelector('.content');
+        if (firstContent) firstContent.style.display = 'block';
+      } catch (err) {
+        outputDiv.innerHTML = '<span class="text-red-600">Error: ' + err + '</span>';
+      }
+    };
+  </script>
+</body>
+</html> 
