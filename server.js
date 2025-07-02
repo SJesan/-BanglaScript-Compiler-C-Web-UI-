@@ -14,8 +14,9 @@ app.post('/compile', (req, res) => {
     const code = req.body.code;
     if (!code) return res.status(400).send('No code provided');
 
-    // Use Linux binary for Render (no .exe)
-    const proc = spawn('./banglascript_compiler', [], { shell: true });
+    // Run the C++ compiler as a subprocess
+    // On Windows, use banglascript_compiler.exe
+    const proc = spawn('banglascript_compiler.exe', [], { shell: true });
 
     let output = '';
     proc.stdout.on('data', data => { output += data.toString(); });

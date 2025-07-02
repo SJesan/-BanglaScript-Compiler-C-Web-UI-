@@ -1,4 +1,5 @@
-document.getElementById('compileBtn').onclick = async function() {
+document.getElementById('compile-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
   const code = document.getElementById('code').value;
   const output = document.getElementById('output');
   output.textContent = 'Compiling...';
@@ -13,4 +14,4 @@ document.getElementById('compileBtn').onclick = async function() {
   } catch (err) {
     output.textContent = 'Error: ' + err;
   }
-}; 
+}); 
